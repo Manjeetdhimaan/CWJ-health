@@ -1,0 +1,126 @@
+---
+components:
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+info:
+  version: 0.1.9
+openapi: 3.0.0
+paths:
+  /api/v1/services/create-service:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                serviceTitle:
+                  type: string
+                  default: ""
+                serviceDescription:
+                  type: string
+                  default: ""
+                serviceIcon:
+                  type: string
+                  default: ""
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: Create service
+      tags:
+        - Service
+  /api/v1/services/get-services:
+    get:
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: get services
+      tags:
+        - Service
+
+  /api/v1/services/get-service:
+    get:
+      parameters:
+        - in: query
+          name: serviceSlug
+          description: Slug of the service.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: get service
+      tags:
+        - Service
+
+  /api/v1/services/create-sub-service:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                subServiceTitle:
+                  type: string
+                  default: ""
+                subServiceDescription:
+                  type: string
+                  default: ""
+                subServiceIcon:
+                  type: string
+                  default: ""
+                parentService:
+                  type: string
+                  default: ""
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: Create Sub service
+      tags:
+        - Sub Service
+
+  /api/v1/services/get-sub-service:
+    get:
+      parameters:
+        - in: query
+          name: subServiceSlug
+          description: Slug of the sub service.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: parentServiceSlug
+          description: Slug of the Parent service.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: get single sub service
+      tags:
+        - Sub Service
+security:
+  - bearerAuth: []
+servers:
+  - description: Local Server
+    url: http://localhost:3000
+  - description: Production Server
+    url: https://api.cwjhealth.com
