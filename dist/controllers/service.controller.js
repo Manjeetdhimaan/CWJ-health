@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSubService = exports.getService = exports.getServices = exports.createSubService = exports.createService = void 0;
+exports.updateSubService = exports.updateService = exports.getSubService = exports.getService = exports.getServices = exports.createSubService = exports.createService = void 0;
 const slugify_1 = __importDefault(require("slugify"));
 const service_model_1 = __importDefault(require("../models/service.model"));
 const sub_service_model_1 = __importDefault(require("../models/sub-service.model"));
@@ -45,7 +45,46 @@ const createService = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.createService = createService;
-const getServices = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const updateService = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const filter = { _id: req.body._id };
+        const serviceSlug = (0, slugify_1.default)(req.body.serviceTitle, { lower: true, remove: /[*+~.()'"!:@]/g, trim: true });
+        const payload = req.body;
+        if (!payload.serviceTitle || !payload.serviceDescription || !payload.serviceIcon) {
+            return res.status(422).json({
+                success: false,
+                message: 'All fields are required.'
+            });
+        }
+        const updateDoc = {
+            $set: {
+                serviceTitle: req.body.serviceTitle,
+                serviceDescription: req.body.serviceDescription,
+                serviceIcon: req.body.serviceIcon,
+                serviceSlug,
+                isDeleted: false
+            }
+        };
+        const result = yield service_model_1.default.findOneAndUpdate(filter, updateDoc, { new: true });
+        if (!result) {
+            return res.status(500).json({
+                success: false,
+                message: 'No service found with this ID, pls try again.'
+            });
+        }
+        ;
+        return res.status(201).json({
+            success: true,
+            service: result,
+            message: 'Service updated successfully'
+        });
+    }
+    catch (error) {
+        return next(error);
+    }
+});
+exports.updateService = updateService;
+const getServices = (_, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const foundServices = yield service_model_1.default.find({ isDeleted: false }).lean();
         // this solution is with Promise.all (use if you prefer it and comment out the below code using await and for loop);
@@ -97,7 +136,6 @@ const getService = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             }).limit(1).select('serviceTitle serviceSlug -_id').lean();
             const relatedServices = [...servicesBefore.reverse(), ...servicesAfter];
             const subServices = yield sub_service_model_1.default.find({ parentService: foundService._id, isDeleted: false });
-            // @ts-ignore
             foundService.subServices = subServices;
             return res.status(200).json({
                 success: true,
@@ -120,6 +158,13 @@ exports.getService = getService;
 // Sub services
 const createSubService = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const foundService = yield service_model_1.default.findOne({ _id: req.body.parentService, isDeleted: false });
+        if (!foundService) {
+            return res.status(404).json({
+                success: false,
+                message: 'No parent service found with this ID'
+            });
+        }
         const slug = (0, slugify_1.default)(req.body.subServiceTitle, { lower: true, remove: /[*+~.()'"!:@]/g, trim: true });
         const service = new sub_service_model_1.default({
             subServiceTitle: req.body.subServiceTitle,
@@ -147,10 +192,57 @@ const createSubService = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.createSubService = createSubService;
+const updateSubService = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const filter = { _id: req.body._id };
+        const payload = Object.assign({}, req.body);
+        const serviceSlug = (0, slugify_1.default)(payload.subServiceTitle, { lower: true, remove: /[*+~.()'"!:@]/g, trim: true });
+        if (!payload.subServiceTitle || !payload.subServiceDescription || !payload.subServiceIcon || !payload.parentService) {
+            return res.status(422).json({
+                success: false,
+                message: 'All fields are required.'
+            });
+        }
+        ;
+        const foundService = yield service_model_1.default.findOne({ _id: req.body.parentService, isDeleted: false });
+        if (!foundService) {
+            return res.status(404).json({
+                success: false,
+                message: 'No parent service found with this ID'
+            });
+        }
+        const updateDoc = {
+            $set: {
+                subServiceTitle: payload.subServiceTitle,
+                subServiceDescription: payload.subServiceDescription,
+                subServiceIcon: payload.subServiceIcon,
+                subServiceSlug: serviceSlug,
+                parentService: payload.parentService,
+                isDeleted: false
+            }
+        };
+        const result = yield sub_service_model_1.default.findOneAndUpdate(filter, updateDoc, { new: true });
+        if (!result) {
+            return res.status(500).json({
+                success: false,
+                message: 'No sub service found with this ID, pls try again.'
+            });
+        }
+        ;
+        return res.status(201).json({
+            success: true,
+            service: result,
+            message: 'Sub-Service updated successfully'
+        });
+    }
+    catch (error) {
+        return next(error);
+    }
+});
+exports.updateSubService = updateSubService;
 const getSubService = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const foundService = yield sub_service_model_1.default.findOne({ isDeleted: false, subServiceSlug: req.query.subServiceSlug }).populate('parentService', 'serviceTitle serviceSlug serviceIcon').lean();
-        // @ts-ignore
         if (foundService && foundService.parentService && foundService.parentService.serviceSlug === req.query.parentServiceSlug) {
             return res.status(200).json({
                 success: true,

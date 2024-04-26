@@ -31,7 +31,44 @@ const createService = async (req: Request, res: Response, next: NextFunction): P
     }
 }
 
-const getServices = async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
+const updateService = async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
+    try {
+        const filter = { _id: req.body._id };
+        const serviceSlug = slugify(req.body.serviceTitle, { lower: true, remove: /[*+~.()'"!:@]/g, trim: true });
+        const payload = req.body
+        if (!payload.serviceTitle || !payload.serviceDescription || !payload.serviceIcon) {
+            return res.status(422).json({
+                success: false,
+                message: 'All fields are required.'
+            })
+        }
+        const updateDoc = {
+            $set: {
+                serviceTitle: req.body.serviceTitle,
+                serviceDescription: req.body.serviceDescription,
+                serviceIcon: req.body.serviceIcon,
+                serviceSlug,
+                isDeleted: false
+            }
+        };
+        const result = await Service.findOneAndUpdate(filter, updateDoc, { new: true });
+        if (!result) {
+            return res.status(500).json({
+                success: false,
+                message: 'No service found with this ID, pls try again.'
+            })
+        };
+        return res.status(201).json({
+            success: true,
+            service: result,
+            message: 'Service updated successfully'
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+const getServices = async (_: Request, res: Response, next: NextFunction): Promise<void | Response> => {
     try {
         const foundServices = await Service.find({ isDeleted: false }).lean();
         // this solution is with Promise.all (use if you prefer it and comment out the below code using await and for loop);
@@ -62,7 +99,6 @@ const getServices = async (req: Request, res: Response, next: NextFunction): Pro
     }
 }
 
-
 const getService = async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
     try {
         const foundService = await Service.findOne({ isDeleted: false, serviceSlug: req.query.serviceSlug }).lean();
@@ -85,8 +121,7 @@ const getService = async (req: Request, res: Response, next: NextFunction): Prom
             const relatedServices = [...servicesBefore.reverse(), ...servicesAfter];
 
             const subServices = await SubService.find({ parentService: foundService._id, isDeleted: false });
-            // @ts-ignore
-            foundService.subServices = subServices;
+            (foundService as any).subServices = subServices;
 
             return res.status(200).json({
                 success: true,
@@ -109,6 +144,13 @@ const getService = async (req: Request, res: Response, next: NextFunction): Prom
 // Sub services
 const createSubService = async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
     try {
+        const foundService = await Service.findOne({ _id: req.body.parentService, isDeleted: false });
+        if (!foundService) {
+            return res.status(404).json({
+                success: false,
+                message: 'No parent service found with this ID'
+            });
+        }
         const slug = slugify(req.body.subServiceTitle, { lower: true, remove: /[*+~.()'"!:@]/g, trim: true });
         const service = new SubService({
             subServiceTitle: req.body.subServiceTitle,
@@ -134,12 +176,55 @@ const createSubService = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
+const updateSubService = async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
+    try {
+        const filter = { _id: req.body._id };
+        const payload = { ...req.body };
+        const serviceSlug = slugify(payload.subServiceTitle, { lower: true, remove: /[*+~.()'"!:@]/g, trim: true });
+        if (!payload.subServiceTitle || !payload.subServiceDescription || !payload.subServiceIcon || !payload.parentService) {
+            return res.status(422).json({
+                success: false,
+                message: 'All fields are required.'
+            })
+        };
+        const foundService = await Service.findOne({ _id: req.body.parentService, isDeleted: false });
+        if (!foundService) {
+            return res.status(404).json({
+                success: false,
+                message: 'No parent service found with this ID'
+            });
+        }
+        const updateDoc = {
+            $set: {
+                subServiceTitle: payload.subServiceTitle,
+                subServiceDescription: payload.subServiceDescription,
+                subServiceIcon: payload.subServiceIcon,
+                subServiceSlug: serviceSlug,
+                parentService: payload.parentService,
+                isDeleted: false
+            }
+        };
+        const result = await SubService.findOneAndUpdate(filter, updateDoc, { new: true });
+        if (!result) {
+            return res.status(500).json({
+                success: false,
+                message: 'No sub service found with this ID, pls try again.'
+            })
+        };
+        return res.status(201).json({
+            success: true,
+            service: result,
+            message: 'Sub-Service updated successfully'
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
 const getSubService = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const foundService = await SubService.findOne({ isDeleted: false, subServiceSlug: req.query.subServiceSlug }).populate('parentService', 'serviceTitle serviceSlug serviceIcon').lean();
-
-        // @ts-ignore
-        if (foundService && foundService.parentService && foundService.parentService.serviceSlug === req.query.parentServiceSlug) {
+        if (foundService && foundService.parentService && (foundService.parentService as any).serviceSlug === req.query.parentServiceSlug) {
             return res.status(200).json({
                 success: true,
                 services: foundService,
@@ -157,5 +242,4 @@ const getSubService = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
-export { createService, createSubService, getServices, getService, getSubService };
-
+export { createService, createSubService, getServices, getService, getSubService, updateService, updateSubService };

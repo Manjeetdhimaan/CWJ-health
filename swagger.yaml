@@ -64,6 +64,36 @@ paths:
       tags:
         - Service
 
+  /api/v1/services/update-service:
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                serviceTitle:
+                  type: string
+                  default: ""
+                serviceDescription:
+                  type: string
+                  default: ""
+                serviceIcon:
+                  type: string
+                  default: ""
+                _id:
+                  type: string
+                  default: ""
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: Update service
+      tags:
+        - Service
+
   /api/v1/services/create-sub-service:
     post:
       requestBody:
@@ -91,6 +121,39 @@ paths:
         "400":
           description: Server Error.
       summary: Create Sub service
+      tags:
+        - Sub Service
+
+  /api/v1/services/update-sub-service:
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                subServiceTitle:
+                  type: string
+                  default: ""
+                subServiceDescription:
+                  type: string
+                  default: ""
+                subServiceIcon:
+                  type: string
+                  default: ""
+                _id:
+                  type: string
+                  default: ""
+                parentService:
+                  type: string
+                  default: "6628ab7cd171a06c0b6a3b07"
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: Update Sub service
       tags:
         - Sub Service
 

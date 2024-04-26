@@ -7,47 +7,12 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const service_controller_1 = require("../controllers/service.controller");
 // Services
-/**
-     * @openapi
-     * '/api/v1/services/create-service':
-     *  post:
-     *     tags:
-     *     - Service Controller
-     *     summary: Create a service
-     *     requestBody:
-     *      required: true
-     *      content:
-     *        application/json:
-     *           schema:
-     *            type: object
-     *            required:
-     *              - serviceTitle
-     *              - serviceDescription
-     *              - serviceIcon
-     *            properties:
-     *              serviceTitle:
-     *                type: string
-     *                default: ""
-     *              serviceDescription:
-     *                type: string
-     *                default: ""
-     *              serviceIcon:
-     *                type: string
-     *                default: ""
-     *     responses:
-     *      201:
-     *        description: Created
-     *      409:
-     *        description: Conflict
-     *      404:
-     *        description: Not Found
-     *      500:
-     *        desccription: Server Error
-     */
 router.post('/create-service', service_controller_1.createService);
+router.put('/update-service', service_controller_1.updateService);
 router.get('/get-services', service_controller_1.getServices);
 router.get('/get-service', service_controller_1.getService);
 // Sub services
 router.post('/create-sub-service', service_controller_1.createSubService);
+router.put('/update-sub-service', service_controller_1.updateSubService);
 router.get('/get-sub-service', service_controller_1.getSubService);
 exports.default = router;

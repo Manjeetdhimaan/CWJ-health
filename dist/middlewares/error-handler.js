@@ -42,7 +42,7 @@ exports.errorHandler = ((err, req, res, next) => {
         });
     }
     if (err.code === 11000) {
-        return res.status(401).json({
+        return res.status(422).json({
             success: false,
             message: `This value already exists, Pls try with another one`,
             value: err.keyValue['serviceSlug'] ? {
