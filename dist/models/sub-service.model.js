@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const subServiceSchema = new mongoose_1.default.Schema({
+const subServiceSchema = new mongoose_1.Schema({
     subServiceTitle: {
         type: String,
         trim: true,

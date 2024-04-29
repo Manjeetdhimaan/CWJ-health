@@ -38,7 +38,6 @@ serviceSchema.virtual('slug').get(function (this: { serviceTitle: string }) {
     return slugify(this.serviceTitle, { lower: true, remove: /[*+~.()'"!:@]/g });
 });
 
-
 const Service = mongoose.model('Service', serviceSchema);
 
 export default Service;

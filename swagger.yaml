@@ -9,6 +9,57 @@ info:
   version: 0.1.9
 openapi: 3.0.0
 paths:
+  /api/v1/users/create-account:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                  default: ""
+                email:
+                  type: string
+                  default: ""
+                password:
+                  type: string
+                  default: ""
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: Create user account
+      tags:
+        - User
+
+  /api/v1/users/authenticate:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  default: ""
+                password:
+                  type: string
+                  default: ""
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: Login
+      tags:
+        - User
+
   /api/v1/services/create-service:
     post:
       requestBody:
@@ -37,6 +88,17 @@ paths:
         - Service
   /api/v1/services/get-services:
     get:
+      parameters:
+        - in: query
+          name: perPage
+          description: Service per page.
+          schema:
+            type: number
+        - in: query
+          name: page
+          description: Current page.
+          schema:
+            type: number
       responses:
         "200":
           description: Success!.
@@ -91,6 +153,24 @@ paths:
         "400":
           description: Server Error.
       summary: Update service
+      tags:
+        - Service
+
+  /api/v1/services/delete-service:
+    delete:
+      parameters:
+        - in: query
+          name: id
+          description: ID of the service.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: Delete service
       tags:
         - Service
 
@@ -180,6 +260,25 @@ paths:
       summary: get single sub service
       tags:
         - Sub Service
+
+  /api/v1/services/delete-sub-service:
+    delete:
+      parameters:
+        - in: query
+          name: id
+          description: ID of the service.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success!.
+        "400":
+          description: Server Error.
+      summary: Delete sub service
+      tags:
+        - Sub Service
+
 security:
   - bearerAuth: []
 servers:

@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const subServiceSchema = new mongoose.Schema({
+const subServiceSchema = new Schema({
     subServiceTitle: {
         type: String,
         trim: true,
@@ -36,7 +36,5 @@ const subServiceSchema = new mongoose.Schema({
     timestamps: true,
 });
 
-
 const SubService = mongoose.model('SubService', subServiceSchema);
-
 export default SubService;
