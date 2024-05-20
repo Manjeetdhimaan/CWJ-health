@@ -1,8 +1,21 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const userSchema = new Schema({
+interface IUser extends Document {
+    name: string;
+    email: string;
+    passwordHash: string;
+    isAdmin: boolean;
+    isDeleted: boolean;
+    resettoken?: string;
+}
+
+interface IUserModel extends Model<IUser> {
+    hashPassword(password: string): Promise<string>;
+}
+
+const userSchema = new Schema<IUser>({
     name: {
         type: String,
         required: [true, 'User name is required']
@@ -51,5 +64,5 @@ userSchema.methods.generateJwt = function (remeberMe = false) {
     });
 }
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model<IUser, IUserModel>('User', userSchema);
 export default User;

@@ -1,7 +1,16 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 import slugify from 'slugify';
 
-const serviceSchema = new mongoose.Schema({
+interface IService extends Document {
+    serviceTitle: string;
+    serviceSlug: string;
+    serviceDescription: string;
+    serviceIcon: string;
+    isDeleted: boolean;
+    createdAt: Date;
+}
+
+const serviceSchema = new mongoose.Schema<IService>({
     serviceTitle: {
         type: String,
         trim: true,
@@ -22,7 +31,7 @@ const serviceSchema = new mongoose.Schema({
     serviceIcon: {
         type: String,
         trim: true,
-        // required: [true, 'Please provide certificate number']
+        // required: [true, 'Please provide service icon']
     },
     isDeleted: {
         type: Boolean,
@@ -38,6 +47,6 @@ serviceSchema.virtual('slug').get(function (this: { serviceTitle: string }) {
     return slugify(this.serviceTitle, { lower: true, remove: /[*+~.()'"!:@]/g });
 });
 
-const Service = mongoose.model('Service', serviceSchema);
+const Service = mongoose.model<IService>('Service', serviceSchema);
 
 export default Service;

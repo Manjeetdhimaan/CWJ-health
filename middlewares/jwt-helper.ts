@@ -5,12 +5,10 @@ const util = require('util');
 import User from "../models/user.model";
 import { failAction } from "../utils/response";
 const verifyJwtAsync = util.promisify(jwt.verify);
-
 interface IRequest extends Request {
     _id: string,
     _email: string
 }
-
 export default class JwtHelper {
     async verifyJwtToken(req: IRequest, res: Response, next: NextFunction) {
         let token;

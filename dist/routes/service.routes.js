@@ -5,19 +5,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
-const service_controller_1 = require("../controllers/service.controller");
-const jwt_helper_1 = require("../middlewares/jwt-helper");
-const verifyToken = jwt_helper_1.verifyJwtToken;
-const verifyAdmin = jwt_helper_1.isAdmin;
+const service_controller_1 = __importDefault(require("../controllers/service.controller"));
+const jwt_helper_1 = __importDefault(require("../middlewares/jwt-helper"));
+const verifyToken = new jwt_helper_1.default().verifyJwtToken;
+const verifyAdmin = new jwt_helper_1.default().isAdmin;
 // Services
-router.post('/create-service', verifyToken, verifyAdmin, service_controller_1.createService);
-router.put('/update-service', verifyToken, verifyAdmin, service_controller_1.updateService);
-router.get('/get-services', service_controller_1.getServices);
-router.get('/get-service', service_controller_1.getService);
-router.delete('/delete-service', verifyToken, verifyAdmin, service_controller_1.deleteService);
+const serviceCtrl = new service_controller_1.default();
+router.post('/create-service', verifyToken, verifyAdmin, serviceCtrl.createService);
+router.put('/update-service', verifyToken, verifyAdmin, serviceCtrl.updateService);
+router.get('/get-services', serviceCtrl.getServices);
+router.get('/get-service', serviceCtrl.getService);
+router.delete('/delete-service', verifyToken, verifyAdmin, serviceCtrl.deleteService);
 // Sub services
-router.post('/create-sub-service', verifyToken, verifyAdmin, service_controller_1.createSubService);
-router.put('/update-sub-service', verifyToken, verifyAdmin, service_controller_1.updateSubService);
-router.get('/get-sub-service', service_controller_1.getSubService);
-router.delete('/delete-sub-service', verifyToken, verifyAdmin, service_controller_1.deleteSubService);
+router.post('/create-sub-service', verifyToken, verifyAdmin, serviceCtrl.createSubService);
+router.put('/update-sub-service', verifyToken, verifyAdmin, serviceCtrl.updateSubService);
+router.get('/get-sub-service', serviceCtrl.getSubService);
+router.delete('/delete-sub-service', verifyToken, verifyAdmin, serviceCtrl.deleteSubService);
 exports.default = router;

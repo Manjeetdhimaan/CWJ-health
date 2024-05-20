@@ -21,7 +21,6 @@ export default class UserController {
             }
             const user = new User({
                 name: req.body.name,
-                // @ts-ignore
                 passwordHash: User.hashPassword(req.body.password),
                 email: req.body.email,
                 isDeleted: false
@@ -94,7 +93,6 @@ export default class UserController {
 //         }
 //         const user = new User({
 //             name: req.body.name,
-//             // @ts-ignore
 //             passwordHash: User.hashPassword(req.body.password),
 //             email: req.body.email,
 //             isDeleted: false
