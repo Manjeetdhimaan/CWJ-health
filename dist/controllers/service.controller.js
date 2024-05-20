@@ -157,7 +157,7 @@ const deleteService = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         const serviceDeleteRes = yield service_model_1.default.findByIdAndDelete(req.query.id).session(session);
         const subServiceDeleteRes = yield sub_service_model_1.default.deleteMany({ parentService: req.query.id }, { session });
         // Commit the transaction if successful
-        if (serviceDeleteRes && subServiceDeleteRes && subServiceDeleteRes.deletedCount > 0) {
+        if (serviceDeleteRes && subServiceDeleteRes && subServiceDeleteRes.deletedCount >= 0 && subServiceDeleteRes.acknowledged) {
             yield session.commitTransaction();
             session.endSession();
             return res.status(201).json({

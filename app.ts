@@ -17,7 +17,10 @@ app.use((req: Request, res: Response, next: NextFunction): Response | void => {
     const allowedOrigins = [
         "http://127.0.0.1:5173",
         "http://localhost:5173",
+        "http://127.0.0.1:4173",
+        "http://localhost:4173",
         "https://dev.cwjhealth.com",
+        "https://rcm-pi.vercel.app"
     ];
     const origin = req.headers.origin as string;
     if (allowedOrigins.includes(origin)) {
@@ -38,7 +41,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get("/", (_: Request, res: Response) => {
-    res.send("Express + TypeScript Server");
+    res.send("Node server running successfully");
 });
 
 app.use(`${api}/services`, serviceRoutes);

@@ -20,7 +20,10 @@ app.use((req, res, next) => {
     const allowedOrigins = [
         "http://127.0.0.1:5173",
         "http://localhost:5173",
-        "https://api.cwjhealth.com",
+        "http://127.0.0.1:4173",
+        "http://localhost:4173",
+        "https://dev.cwjhealth.com",
+        "https://rcm-pi.vercel.app"
     ];
     const origin = req.headers.origin;
     if (allowedOrigins.includes(origin)) {
@@ -35,7 +38,7 @@ app.use((req, res, next) => {
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(body_parser_1.default.json());
 app.get("/", (_, res) => {
-    res.send("Express + TypeScript Server");
+    res.send("Node server running successfully");
 });
 app.use(`${api}/services`, service_routes_1.default);
 app.use(`${api}/users`, user_routes_1.default);
