@@ -33,8 +33,7 @@ function main() {
             "Access-Control-Allow-Headers",
             "Content-type,Accept,X-Access-Token,X-Key,If-Modified-Since,Authorization"
         );
-        // @ts-ignore
-        res.header("Access-Control-Allow-Credentials", true);
+        res.header("Access-Control-Allow-Credentials", "true");
         return next();
     });
 
