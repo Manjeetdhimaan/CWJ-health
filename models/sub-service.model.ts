@@ -1,6 +1,16 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const subServiceSchema = new Schema({
+interface ISubService extends Document {
+    subServiceTitle: string;
+    subServiceSlug: string;
+    subServiceDescription: string;
+    subServiceIcon: string;
+    parentService: Schema.Types.ObjectId;
+    isDeleted: boolean;
+    createdAt: Date
+}
+
+const subServiceSchema = new Schema<ISubService>({
     subServiceTitle: {
         type: String,
         trim: true,
@@ -36,5 +46,5 @@ const subServiceSchema = new Schema({
     timestamps: true,
 });
 
-const SubService = mongoose.model('SubService', subServiceSchema);
+const SubService = mongoose.model<ISubService>('SubService', subServiceSchema);
 export default SubService;
