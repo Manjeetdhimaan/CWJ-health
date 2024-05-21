@@ -2,9 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import slugify from "slugify";
 import mongoose from "mongoose";
 
-import Service from '../models/service.model';
+import Service, { IPopulatedService, IService } from '../models/service.model';
 import SubService from '../models/sub-service.model';
 import { successAction, failAction } from "../utils/response";
+import { LeanDocument } from "mongoose";
 
 export default class ServiceController {
     // Services
@@ -62,23 +63,19 @@ export default class ServiceController {
                 .skip(perPage * (page - 1)).lean();
             // this solution is with Promise.all (use if you prefer it and comment out the below code using await and for loop);
             // const populatedServices = await Promise.all(foundServices.map(async (service) => {
-            //     const populatedService: any = service.toObject(); // Convert to plain JavaScript object
+            //     const populatedService: IPopulatedService = service.toObject(); // Convert to plain JavaScript object
             //     populatedService.subServices = await SubService.find({ parentService: service._id, isDeleted: false });
             //     return populatedService;
             // }));
             for (const service of foundServices) {
-                const populatedService = service as any;
+                const populatedService = service as IPopulatedService;
                 const subServices = await SubService.find({ parentService: populatedService._id, isDeleted: false });
                 populatedService.subServices = subServices;
             }
             if (!foundServices || foundServices.length <= 0) {
                 return res.status(200).json(failAction('No services created yet.', 200));
             };
-            return res.status(200).json({
-                success: true,
-                services: foundServices,
-                message: 'Services fetched successfully'
-            });
+            return res.status(200).json(successAction<{ services: LeanDocument<IService[]> }>({ services: foundServices }, 'Services fetched successfully', true));
         } catch (error) {
             return next(error);
         }

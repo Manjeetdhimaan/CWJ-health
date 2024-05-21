@@ -38,8 +38,8 @@ export default class JwtHelper {
             } else {
                 next();
             }
-        } catch (err: any) {
-            return res.status(500).send(failAction(err.message || 'Internal Server Error', 500));
+        } catch (err) {
+            return res.status(500).send(failAction((err as Error).message || 'Internal Server Error', 500));
         }
     };
 }

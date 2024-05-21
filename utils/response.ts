@@ -1,7 +1,7 @@
 import { status } from "./status";
 
-export function successAction(data: any, message = "OK", success = true) {
-    return { statusCode: status.SUCCESS, data, message, success };
+export function successAction<T>(data: T, message = "OK", success = true) {
+    return { statusCode: status.SUCCESS, message, success, data };
 }
 
 export function failAction(message: string = 'Server error', statusCode: number = status.FAILURE) {

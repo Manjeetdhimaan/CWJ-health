@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface ISubService extends Document {
+export interface ISubService extends Document {
     subServiceTitle: string;
     subServiceSlug: string;
     subServiceDescription: string;

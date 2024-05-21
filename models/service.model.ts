@@ -1,7 +1,8 @@
 import mongoose, { Document } from "mongoose";
 import slugify from 'slugify';
+import { ISubService } from "./sub-service.model";
 
-interface IService extends Document {
+export interface IService extends Document {
     serviceTitle: string;
     serviceSlug: string;
     serviceDescription: string;
@@ -9,6 +10,11 @@ interface IService extends Document {
     isDeleted: boolean;
     createdAt: Date;
 }
+
+export interface IPopulatedService extends IService {
+    subServices: ISubService[];
+}
+
 
 const serviceSchema = new mongoose.Schema<IService>({
     serviceTitle: {

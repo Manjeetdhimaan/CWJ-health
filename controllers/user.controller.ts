@@ -45,7 +45,7 @@ export default class UserController {
     // login as user
     authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
         try {
-            const user: any = await User.findOne({
+            const user = await User.findOne({
                 email: req.body.email,
                 isDeleted: false
             });
@@ -117,7 +117,7 @@ export default class UserController {
 // // login as user
 // const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
 //     try {
-//         const user: any = await User.findOne({
+//         const user = await User.findOne({
 //             email: req.body.email,
 //             isDeleted: false
 //         });

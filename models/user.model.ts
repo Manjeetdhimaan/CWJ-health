@@ -9,10 +9,13 @@ interface IUser extends Document {
     isAdmin: boolean;
     isDeleted: boolean;
     resettoken?: string;
+    verifyPassword(password: string): boolean;
+    generateJwt(remeberFlag: boolean): string;
 }
 
 interface IUserModel extends Model<IUser> {
     hashPassword(password: string): Promise<string>;
+    verifyPassword(password: string): Promise<string>;
 }
 
 const userSchema = new Schema<IUser>({
@@ -47,7 +50,7 @@ const userSchema = new Schema<IUser>({
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-userSchema.statics.hashPassword = function hashPassword(password) {
+userSchema.statics.hashPassword = function hashPassword(password: string) {
     return bcrypt.hashSync(password, 10);
 }
 
