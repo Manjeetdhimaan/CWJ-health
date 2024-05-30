@@ -61,6 +61,7 @@ export default class ServiceController {
             const page = Number(req.query.page) || 1;
             const foundServices = await Service.find({ isDeleted: false }).limit(perPage)
                 .skip(perPage * (page - 1)).lean();
+
             // this solution is with Promise.all (use if you prefer it and comment out the below code using await and for loop);
             // const populatedServices = await Promise.all(foundServices.map(async (service) => {
             //     const populatedService: IPopulatedService = service.toObject(); // Convert to plain JavaScript object

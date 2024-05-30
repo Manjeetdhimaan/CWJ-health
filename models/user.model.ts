@@ -15,6 +15,7 @@ interface IUser extends Document {
 
 interface IUserModel extends Model<IUser> {
     hashPassword(password: string): Promise<string>;
+    verifyPassword(password: string): Promise<string>;
 }
 
 const userSchema = new Schema<IUser>({

@@ -9,11 +9,11 @@ import YAML from 'yamljs';
 
 import { errorHandler } from './middlewares/error-handler';
 import './config/db';
-const app: Express = express();
-const port = process.env.PORT || 3000;
-const api = process.env.API_URL || '/api/v1';
 
 function main() {
+    const app: Express = express();
+    const port = process.env.PORT || 3000;
+    const api = process.env.API_URL || '/api/v1';
     app.use((req: Request, res: Response, next: NextFunction): Response | void => {
         const allowedOrigins = [
             "http://127.0.0.1:5173",
@@ -33,7 +33,8 @@ function main() {
             "Access-Control-Allow-Headers",
             "Content-type,Accept,X-Access-Token,X-Key,If-Modified-Since,Authorization"
         );
-        res.header("Access-Control-Allow-Credentials", "true");
+        // @ts-ignore
+        res.header("Access-Control-Allow-Credentials", true);
         return next();
     });
 
